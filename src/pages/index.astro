@@ -16,7 +16,7 @@ import Layout from '../layouts/Layout.astro';
 
     <section class="form-section">
       <h2>Register to Win a Trip to Miami Beach</h2>
-      <form>
+      <form id="contest-form">
         <div class="form-field">
           <input type="text" name="name" placeholder="NAME:" required />
         </div>
@@ -35,6 +35,11 @@ import Layout from '../layouts/Layout.astro';
 
         <button type="submit" class="submit-btn">SUBMIT</button>
       </form>
+
+      <div id="form-messages" class="form-messages" style="display: none;">
+        <p id="message-text"></p>
+      </div>
+
       <div class="socials">
         <p>Follow us to Enter to Win</p>
         <div class="handles">
@@ -77,6 +82,16 @@ import Layout from '../layouts/Layout.astro';
     scroll-behavior: smooth;
   }
 
+  body {
+    scrollbar-width: none;
+    -ms-overflow-style: none;
+    overflow-y: scroll;
+  }
+
+  body::-webkit-scrollbar {
+    display: none;
+  }
+
   .hero {
     background-image: url('/images/sunset.webp');
     background-position: center;
@@ -89,6 +104,12 @@ import Layout from '../layouts/Layout.astro';
     display: flex;
     justify-content: flex-end;
     padding: 0 2rem;
+  }
+
+  @media screen and (max-device-width: 1024px) {
+    .hero {
+      background-attachment: scroll;
+    }
   }
 
   .icon-text {
@@ -109,6 +130,11 @@ import Layout from '../layouts/Layout.astro';
 
   .icon-wrapper img {
     height: 60px;
+    transition: transform 0.3s ease;
+  }
+
+  .icon-wrapper img:hover {
+    transform: scale(1.05);
   }
 
   .hero-text {
@@ -117,7 +143,6 @@ import Layout from '../layouts/Layout.astro';
     text-shadow: 0px 2px 4px rgba(0, 0, 0, 0.25);
   }
 
-  /* form */
   .form-section {
     color: #6c8a7c;
     text-align: center;
@@ -185,6 +210,7 @@ import Layout from '../layouts/Layout.astro';
   input[type='email']:focus,
   input[type='tel']:focus {
     border-color: #7a9b8a;
+    transform: scale(1.02);
   }
 
   .submit-btn {
@@ -209,11 +235,42 @@ import Layout from '../layouts/Layout.astro';
 
   .submit-btn:hover {
     background-color: #7a9b8a;
+    transform: translateY(-2px);
+    box-shadow: 0 6px 20px rgba(122, 155, 138, 0.3);
   }
 
   .submit-btn:active {
     transform: translateY(0);
     box-shadow: 0 4px 15px rgba(122, 155, 138, 0.3);
+  }
+
+  .submit-btn:disabled {
+    opacity: 0.6;
+    cursor: not-allowed;
+    transform: none;
+    box-shadow: none;
+  }
+
+  .form-messages {
+    margin-top: 1rem;
+    padding: 1rem;
+    border-radius: 10px;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    transition: all 0.3s ease-in-out;
+  }
+
+  .form-messages.success {
+    background-color: #d4edda;
+    color: #155724;
+    border: 1px solid #c3e6cb;
+  }
+
+  .form-messages.error {
+    background-color: #f8d7da;
+    color: #721c24;
+    border: 1px solid #f5c6cb;
   }
 
   .socials {
@@ -231,6 +288,15 @@ import Layout from '../layouts/Layout.astro';
     justify-content: center;
     align-items: center;
     gap: 0.8rem;
+  }
+
+  .handles span {
+    transition: color 0.3s ease;
+    cursor: pointer;
+  }
+
+  .handles span:hover {
+    color: #7a9b8a;
   }
 
   @media (max-width: 650px) {
@@ -281,4 +347,113 @@ import Layout from '../layouts/Layout.astro';
       margin-bottom: 1rem;
     }
   }
+
+  @media screen and (min-device-width: 768px) and (max-device-width: 1024px) {
+    .submit-btn,
+    input[type='text'],
+    input[type='email'],
+    input[type='tel'] {
+      -webkit-tap-highlight-color: rgba(0, 0, 0, 0);
+    }
+
+    body {
+      -webkit-overflow-scrolling: touch;
+    }
+  }
 </style>
+
+<script>
+  document.addEventListener('DOMContentLoaded', function () {
+    const form = document.getElementById('contest-form');
+    const submitBtn = form.querySelector('.submit-btn');
+    const messagesDiv = document.getElementById('form-messages');
+    const messageText = document.getElementById('message-text');
+
+    function showMessage(message, isSuccess = true) {
+      messageText.textContent = message;
+      messagesDiv.className = `form-messages ${isSuccess ? 'success' : 'error'}`;
+      messagesDiv.style.display = 'block';
+
+      messagesDiv.scrollIntoView({ behavior: 'smooth', block: 'center' });
+
+      if (isSuccess) {
+        setTimeout(() => {
+          messagesDiv.style.display = 'none';
+        }, 5000);
+      }
+    }
+
+    function resetForm() {
+      form.reset();
+    }
+
+    form.addEventListener('submit', async function (e) {
+      e.preventDefault();
+
+      submitBtn.disabled = true;
+      const originalText = submitBtn.textContent;
+      submitBtn.textContent = 'SUBMITTING...';
+
+      messagesDiv.style.display = 'none';
+
+      try {
+        const formData = new FormData(form);
+        const data = {
+          name: formData.get('name'),
+          company: formData.get('company'),
+          email: formData.get('email'),
+          phone: formData.get('phone'),
+        };
+
+        const response = await fetch('/form-handler.php', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify(data),
+        });
+
+        const contentType = response.headers.get('content-type');
+        if (!contentType || !contentType.includes('application/json')) {
+          const textResponse = await response.text();
+          console.error('Non-JSON response:', textResponse);
+          throw new Error('Server returned non-JSON response');
+        }
+
+        const result = await response.json();
+
+        if (response.ok && result.success) {
+          showMessage(
+            result.message ||
+              'Thank you! Your entry has been submitted successfully!',
+            true
+          );
+          resetForm();
+        } else {
+          showMessage(
+            result.error ||
+              'There was an error submitting your entry. Please try again.',
+            false
+          );
+        }
+      } catch (error) {
+        console.error('Submission error:', error);
+        let errorMessage = 'Network error. ';
+
+        if (error.name === 'TypeError' && error.message.includes('fetch')) {
+          errorMessage +=
+            'Please check your internet connection and try again.';
+        } else if (error.message.includes('JSON')) {
+          errorMessage += 'Please try again.';
+        } else {
+          errorMessage += 'Please try again later.';
+        }
+
+        showMessage(errorMessage, false);
+      } finally {
+        submitBtn.disabled = false;
+        submitBtn.textContent = originalText;
+      }
+    });
+  });
+</script>
