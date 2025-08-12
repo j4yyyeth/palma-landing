@@ -43,7 +43,7 @@ import Layout from '../layouts/Layout.astro';
       <div class="socials">
         <p>Follow us to Enter to Win</p>
         <div class="handles">
-          <span>@LeffertsInvestments</span><span>@PalmaMiamiBeach</span>
+          <a target="_blank" href="https://www.instagram.com/leffertsinvestments/">@LeffertsInvestments</a><a target="_blank" href="https://www.instagram.com/palmamiamibeach/">@PalmaMiamiBeach</a>
         </div>
       </div>
     </section>
@@ -311,12 +311,14 @@ import Layout from '../layouts/Layout.astro';
     gap: 0.8rem;
   }
 
-  .handles span {
-    transition: color 0.3s ease;
+  .handles a {
+    transition: color 0.3s ease-in-out;
     cursor: pointer;
+    text-decoration: none;
+    color: #6e8a7c;;
   }
 
-  .handles span:hover {
+  .handles a:hover {
     color: #7a9b8a;
   }
 
