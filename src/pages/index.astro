@@ -1,0 +1,284 @@
+---
+import Layout from '../layouts/Layout.astro';
+---
+
+<Layout>
+  <main>
+    <section class="hero">
+      <div class="icon-text">
+        <div class="icon-wrapper">
+          <img src="/images/palma-logo.svg" style="height: 50px;" />
+          <img src="/images/expo-logo.png" style="height: 80px;" />
+        </div>
+        <h1 class="hero-text">Win a Trip to Miami Beach</h1>
+      </div>
+    </section>
+
+    <section class="form-section">
+      <h2>Register to Win a Trip to Miami Beach</h2>
+      <form>
+        <div class="form-field">
+          <input type="text" name="name" placeholder="NAME:" required />
+        </div>
+
+        <div class="form-field">
+          <input type="text" name="company" placeholder="COMPANY:" required />
+        </div>
+
+        <div class="form-field">
+          <input type="email" name="email" placeholder="E-MAIL:" required />
+        </div>
+
+        <div class="form-field">
+          <input type="tel" name="phone" placeholder="PHONE:" required />
+        </div>
+
+        <button type="submit" class="submit-btn">SUBMIT</button>
+      </form>
+      <div class="socials">
+        <p>Follow us to Enter to Win</p>
+        <div class="handles">
+          <span>@LeffertsInvestments</span><span>@PalmaMiamiBeach</span>
+        </div>
+      </div>
+    </section>
+  </main>
+</Layout>
+
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Montserrat:ital,wght@0,100..900;1,100..900&display=swap');
+
+  @font-face {
+    font-family: didot-italic;
+    src: url('/fonts/didot-italic.ttf') format('truetype');
+    font-display: swap;
+  }
+
+  @font-face {
+    font-family: didot-headline;
+    src: url('/fonts/didot-headline.ttf') format('truetype');
+    font-display: swap;
+  }
+
+  * {
+    margin: 0;
+    padding: 0;
+  }
+
+  body,
+  html {
+    width: 100%;
+    height: 100%;
+    padding: 0;
+    margin: 0;
+    background: #fef7f1;
+    font-family: 'Montserrat', sans-serif;
+    overflow-x: hidden;
+    scroll-behavior: smooth;
+  }
+
+  .hero {
+    background-image: url('/images/sunset.webp');
+    background-position: center;
+    background-repeat: no-repeat;
+    background-size: cover;
+    height: 50vh;
+    color: #ffffff;
+    font-family: 'didot-italic', sans-serif;
+    font-weight: 100;
+    display: flex;
+    justify-content: flex-end;
+    padding: 0 2rem;
+  }
+
+  .icon-text {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 2rem;
+    max-width: 400px;
+    margin-top: 3rem;
+  }
+
+  .icon-wrapper {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 1rem;
+  }
+
+  .icon-wrapper img {
+    height: 60px;
+  }
+
+  .hero-text {
+    font-size: 70px;
+    font-weight: 100;
+    text-shadow: 0px 2px 4px rgba(0, 0, 0, 0.25);
+  }
+
+  /* form */
+  .form-section {
+    color: #6c8a7c;
+    text-align: center;
+    padding: 2.5rem 0;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    gap: 2rem;
+  }
+
+  .form-section h2 {
+    font-size: 27px;
+    text-transform: uppercase;
+    font-weight: 700;
+    letter-spacing: 2px;
+    word-spacing: 3px;
+    margin: 0 auto 0.5rem auto;
+	width: 90%;
+  }
+
+  form {
+    max-width: 600px;
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+    margin: 0 auto;
+  }
+
+  .form-field {
+    position: relative;
+  }
+
+  input[type='text'],
+  input[type='email'],
+  input[type='tel'] {
+    width: 100%;
+    border-radius: 50px;
+    background-color: transparent;
+    outline: none;
+    padding: 5px 20px;
+    box-sizing: border-box;
+    transition: all 0.3s ease-in-out;
+    border: 1.3px solid #6e8a7c;
+    color: #6e8a7c;
+    text-transform: uppercase;
+    font-size: 22px;
+    font-weight: 200;
+    font-family: 'Montserrat', sans-serif;
+  }
+
+  input[type='text']::placeholder,
+  input[type='email']::placeholder,
+  input[type='tel']::placeholder {
+    color: #6e8a7c;
+    text-transform: uppercase;
+    font-size: 22px;
+    font-weight: 200;
+    font-family: 'Montserrat', sans-serif;
+    letter-spacing: 3px;
+  }
+
+  input[type='text']:focus,
+  input[type='email']:focus,
+  input[type='tel']:focus {
+    border-color: #7a9b8a;
+  }
+
+  .submit-btn {
+    background-color: #6b8a7a;
+    color: #fef7f1;
+    border: none;
+    border-radius: 50px;
+    padding: 8px 60px;
+    font-size: 27px;
+    text-transform: uppercase;
+    font-weight: 200;
+    font-family: 'Montserrat', sans-serif;
+    letter-spacing: 3px;
+    letter-spacing: 3px;
+    text-transform: uppercase;
+    cursor: pointer;
+    transition: all 0.3s ease-in-out;
+    margin-top: 1rem;
+    align-self: center;
+    min-width: 200px;
+  }
+
+  .submit-btn:hover {
+    background-color: #7a9b8a;
+  }
+
+  .submit-btn:active {
+    transform: translateY(0);
+    box-shadow: 0 4px 15px rgba(122, 155, 138, 0.3);
+  }
+
+  .socials {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    font-size: 22px;
+    text-transform: uppercase;
+    font-weight: 600;
+  }
+
+  .handles {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 0.8rem;
+  }
+
+  @media (max-width: 650px) {
+    .hero {
+      justify-content: center;
+      height: 40vh;
+    }
+    .icon-text {
+      justify-content: center;
+      margin: 0 auto;
+      text-align: center;
+    }
+    .hero-text {
+      font-size: 50px;
+    }
+    .socials {
+      font-size: 16px;
+    }
+    .form-section h2 {
+      font-size: 20px;
+      text-align: center;
+      margin: 0 auto 0.5rem auto;
+    }
+    form {
+      width: 90%;
+    }
+    input[type='text'],
+    input[type='email'],
+    input[type='tel'],
+    input[type='text']::placeholder,
+    input[type='email']::placeholder,
+    input[type='tel']::placeholder {
+      font-size: 16px;
+    }
+    .submit-btn {
+      font-size: 22px;
+    }
+  }
+
+  @media (max-width: 475px) {
+    .handles {
+      flex-direction: column;
+    }
+    .socials {
+      gap: 0.3rem;
+    }
+    .socials > p {
+      margin-bottom: 1rem;
+    }
+  }
+</style>
