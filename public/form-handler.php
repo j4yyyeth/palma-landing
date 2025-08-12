@@ -1,10 +1,8 @@
 <?php
-// Contest form handler - adapted from your existing form handler
 ini_set('log_errors', 1);
 ini_set('error_log', '../logs/form_errors.log');
 error_reporting(E_ALL);
 
-// Load configuration
 function load_config()
 {
     return [
@@ -64,7 +62,6 @@ function check_rate_limit($ip, $config)
     $now = time();
     $user_requests = $rates[$ip] ?? [];
 
-    // Clean old requests
     $user_requests = array_filter($user_requests, function ($time) use ($now, $time_window) {
         return ($now - $time) < $time_window;
     });
@@ -74,11 +71,9 @@ function check_rate_limit($ip, $config)
         return false;
     }
 
-    // Add current request
     $user_requests[] = $now;
     $rates[$ip] = array_values($user_requests);
 
-    // Clean up old IPs to prevent file bloat
     foreach ($rates as $stored_ip => $requests) {
         $rates[$stored_ip] = array_filter($requests, function ($time) use ($now, $time_window) {
             return ($now - $time) < $time_window;
@@ -93,7 +88,6 @@ function check_rate_limit($ip, $config)
     return true;
 }
 
-// Validation functions
 function validate_name($name, $max_length = 50)
 {
     return !empty($name) &&
@@ -129,7 +123,6 @@ function sanitize_input($input)
     return htmlspecialchars(trim($input), ENT_QUOTES, 'UTF-8');
 }
 
-// Check rate limit first
 $user_ip = $_SERVER['REMOTE_ADDR'] ?? '0.0.0.0';
 if (!check_rate_limit($user_ip, $config)) {
     http_response_code(429);
@@ -137,7 +130,6 @@ if (!check_rate_limit($user_ip, $config)) {
     exit;
 }
 
-// Get and validate input
 $raw_input = file_get_contents('php://input');
 if (empty($raw_input)) {
     error_log("Empty input received");
@@ -163,7 +155,6 @@ $phone = $input['phone'] ?? '';
 
 error_log("Contest raw data - Name: '$name', Company: '$company', Email: '$email', Phone: '$phone'");
 
-// Validate all inputs
 if (!validate_name($name, $config['max_name_length'])) {
     error_log("Contest: Invalid name: " . $name);
     http_response_code(400);
@@ -192,7 +183,6 @@ if (!validate_phone($phone, $config['max_phone_length'])) {
     exit;
 }
 
-// Sanitize after validation
 $name = sanitize_input($name);
 $company = sanitize_input($company);
 $email = filter_var(trim($email), FILTER_SANITIZE_EMAIL);
@@ -200,11 +190,9 @@ $phone = sanitize_input($phone);
 
 error_log("Contest validated data - Name: '$name', Company: '$company', Email: '$email', Phone: '$phone'");
 
-// Save to JSON file in data folder
 $submissions_file = $config['data_dir'] . 'form-submissions.json';
 
 try {
-    // Create data directory if it doesn't exist
     if (!file_exists($config['data_dir'])) {
         if (!mkdir($config['data_dir'], 0755, true)) {
             error_log("Failed to create data directory");
@@ -213,7 +201,6 @@ try {
         error_log("Created data directory");
     }
 
-    // Read existing submissions
     $submissions = [];
     if (file_exists($submissions_file)) {
         $content = file_get_contents($submissions_file);
@@ -222,7 +209,6 @@ try {
         }
     }
 
-    // Check for duplicate email
     foreach ($submissions as $sub) {
         if (strtolower($sub['email']) === strtolower($email)) {
             error_log("Contest: Duplicate email attempt: " . $email);
@@ -232,28 +218,22 @@ try {
         }
     }
 
-    // Create submission record
     $submission = [
         'id' => uniqid('contest_', true),
         'name' => $name,
         'company' => $company,
         'email' => $email,
         'phone' => $phone,
-        'submitted_at' => date('Y-m-d H:i:s'),
-        'timestamp' => time(),
-        'ip' => $user_ip,
-        'user_agent' => $_SERVER['HTTP_USER_AGENT'] ?? 'unknown'
+        'submitted_at' => date('Y-m-d H:i:s')
     ];
 
     $submissions[] = $submission;
 
-    // Save to file with proper permissions
     if (file_put_contents($submissions_file, json_encode($submissions, JSON_PRETTY_PRINT | JSON_UNESCAPED_UNICODE)) === false) {
         error_log("Failed to save contest submission to file");
         throw new Exception("Could not save submission");
     }
 
-    // Set restrictive permissions
     chmod($submissions_file, 0644);
 
     error_log("Contest submission saved successfully - ID: " . $submission['id'] . ", Name: $name, Email: $email");

@@ -152,6 +152,27 @@ import Layout from '../layouts/Layout.astro';
     justify-content: center;
     align-items: center;
     gap: 2rem;
+    background-image: url('/images/leaves.png');
+    background-position: center;
+    background-repeat: no-repeat;
+    background-size: cover;
+    position: relative;
+  }
+
+  .form-section::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: rgba(254, 247, 241, 0.85);
+    z-index: 1;
+  }
+
+  .form-section > * {
+    position: relative;
+    z-index: 2;
   }
 
   .form-section h2 {
