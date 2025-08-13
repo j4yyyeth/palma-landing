@@ -7,7 +7,7 @@ function load_config()
 {
     return [
         'data_dir' => '../data/',
-        'max_requests_per_hour' => 10,
+        'max_requests_per_hour' => 500,
         'max_name_length' => 50,
         'max_company_length' => 100,
         'max_phone_length' => 20
@@ -123,13 +123,6 @@ function sanitize_input($input)
     return htmlspecialchars(trim($input), ENT_QUOTES, 'UTF-8');
 }
 
-$user_ip = $_SERVER['REMOTE_ADDR'] ?? '0.0.0.0';
-if (!check_rate_limit($user_ip, $config)) {
-    http_response_code(429);
-    echo json_encode(['error' => 'Too many requests. Please try again in an hour.']);
-    exit;
-}
-
 $raw_input = file_get_contents('php://input');
 if (empty($raw_input)) {
     error_log("Empty input received");
@@ -224,7 +217,8 @@ try {
         'company' => $company,
         'email' => $email,
         'phone' => $phone,
-        'submitted_at' => date('Y-m-d H:i:s')
+        'submitted_at' => date('Y-m-d H:i:s'),
+        'ip_address' => $_SERVER['REMOTE_ADDR'] ?? 'unknown'
     ];
 
     $submissions[] = $submission;
